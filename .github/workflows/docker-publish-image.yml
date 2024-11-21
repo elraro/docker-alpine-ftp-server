@@ -14,8 +14,8 @@ on:
   pull_request:
 
 env:
-  # Image name at docker hub
-  IMAGE_NAME: delfer/alpine-ftp-server
+  REGISTRY: ghcr.io
+  IMAGE_NAME: elraro/docker-alpine-ftp-server
 
 jobs:
   # Run tests.
@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: Checkout 
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -54,11 +54,11 @@ jobs:
         uses: docker/setup-buildx-action@v1
        
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
-          # Genrate secret from here https://hub.docker.com/settings/security
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add Label Schema to Dockerfile
         run: |
@@ -67,16 +67,16 @@ jobs:
           echo "LABEL org.label-schema.build-date=$TIME_ISO" >> Dockerfile
           echo "LABEL org.label-schema.name=vsftpd" >> Dockerfile
           echo "LABEL org.label-schema.url=https://security.appspot.com/vsftpd.html" >> Dockerfile
-          echo "LABEL org.label-schema.vcs-url=https://github.com/delfer/docker-alpine-ftp-server" >> Dockerfile
+          echo "LABEL org.label-schema.vcs-url=https://github.com/elraro/docker-alpine-ftp-server" >> Dockerfile
           GIT_HASH=$(git rev-parse --short "$GITHUB_SHA")
           echo "LABEL org.label-schema.vcs-ref=$GIT_HASH" >> Dockerfile
           echo "LABEL org.label-schema.schema-version=1.0.0-rc.1" >> Dockerfile
-          echo "LABEL org.label-schema.docker.cmd=\"docker run -d -p 21:21 -e USERS=\"username|password\" delfer/alpine-ftp-server\"" >> Dockerfile
+          echo "LABEL org.label-schema.docker.cmd=\"docker run -d -p 21:21 -e USERS=\"username|password\" elraro/alpine-ftp-server\"" >> Dockerfile
           # Show edited Dockerfile content
           cat Dockerfile
                     
       - name: Build and push latest
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
