@@ -8,7 +8,7 @@ docker run -d \
     -p 21000-21010:21000-21010 \
     -e USERS="one|1234" \
     -e ADDRESS=ftp.site.domain \
-    elraro/alpine-ftp-server
+    ghcr.io/elraro/alpine-ftp-server:latest
 ```
 
 ## Configuration
@@ -52,7 +52,7 @@ docker run -d \
     -e ADDRESS=ftp.site.domain \
     -e TLS_CERT="/etc/letsencrypt/live/ftp.site.domain/fullchain.pem" \
     -e TLS_KEY="/etc/letsencrypt/live/ftp.site.domain/privkey.pem" \
-    elraro/alpine-ftp-server
+    ghcr.io/elraro/alpine-ftp-server
 ```
 
 - Do not forget to replace ftp.site.domain with actual domain pointing to your server's IP.
@@ -62,7 +62,7 @@ docker run -d \
 ## Via docker-compose
 ```
 alpine-ftp-server:
-  image: elraro/alpine-ftp-server
+  image: ghcr.io/elraro/alpine-ftp-server
   ports:
     - "21:21"
     - 21000-21010:21000-21010
